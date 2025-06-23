@@ -1,6 +1,12 @@
 #!/bin/bash
-# Pull the latest image
-podman pull debian:bookworm
-# Mount the git repo to /srv, install necessary packages and run the publish script
-podman run --rm -it -v $(git rev-parse --show-toplevel):/srv:Z debian:bookworm \
-    bash -c "/srv/tools/publish-inner $@"
+
+set -e
+
+GIT_REPO_DIR=$(git rev-parse --show-toplevel)
+IMAGE_NAME=$(echo $(basename ${GIT_REPO_DIR})-tools)
+
+# Build the image for the RPM tools.
+podman build tools/ -t ${IMAGE_NAME}
+# Mount the git repo to /srv, and run the publish script
+podman run --rm -it -v $(git rev-parse --show-toplevel):/srv:Z ${IMAGE_NAME} \
+    /srv/tools/publish-inner dangerzone "$@"
