@@ -1,0 +1,35 @@
+name: Publish to R2
+# Trigger on pushes to main/release that modify public/
+on:
+  push:
+    branches:
+      - main
+      - release
+    paths:
+      - 'public/**'
+      - '.github/workflows/publish.yml'
+
+jobs:
+  publish-main:
+    if: github.ref == 'refs/heads/main'
+    uses: freedomofpress/actionslib/.github/workflows/publish-r2.yaml@main
+    with:
+      path: public/
+      lfs: true
+    secrets:
+      R2_ACCESS_KEY_ID: ${{ secrets.PROD_R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.PROD_R2_SECRET_ACCESS_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.PROD_R2_ACCOUNT_ID }}
+      R2_BUCKET: ${{ secrets.PROD_R2_BUCKET }}
+
+  publish-release:
+    if: github.ref == 'refs/heads/release'
+    uses: freedomofpress/actionslib/.github/workflows/publish-r2.yaml@main
+    with:
+      path: public/
+      lfs: true
+    secrets:
+      R2_ACCESS_KEY_ID: ${{ secrets.QA_R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.QA_R2_SECRET_ACCESS_KEY }}
+      R2_ACCOUNT_ID: ${{ secrets.QA_R2_ACCOUNT_ID }}
+      R2_BUCKET: ${{ secrets.QA_R2_BUCKET }}
