@@ -24,18 +24,14 @@ def format_size(size_bytes):
 def parse_rpm_repo(repo_path):
     """Parse RPM repository structure and extract package information"""
     result = {}
-    repo_base_path = Path(repo_path) / "workstation/dom0"
 
     # RPM repositories are often organized by release/version
     # Let's check for common directory structures
-    release_dirs = []
-
-    # Check for release-based directories (e.g., el8, el9, fedora36)
-    for item in repo_base_path.iterdir():
-        release_dirs.append((item.name, item))
+    release_dirs = {rpm.parent for rpm in repo_path.glob("**/*.rpm")}
+    release_dirs = [(dir.name, dir) for dir in sorted(release_dirs)]
 
     # Process each release directory
-    for release_name, release_path in sorted(release_dirs):
+    for release_name, release_path in release_dirs:
         result[release_name] = {"components": {}}
 
         result[release_name]["components"] = defaultdict(list)
@@ -62,9 +58,13 @@ def parse_rpm_repo(repo_path):
                     "filename": rpm_file.name,
                 }
 
-                result[release_name]["components"][hdr[rpm.RPMTAG_ARCH]].append(package_info)
+                result[release_name]["components"][hdr[rpm.RPMTAG_ARCH]].append(
+                    package_info
+                )
 
-    if not any(comps for rel in result.values() for comps in rel["components"].values()):
+    if not any(
+        comps for rel in result.values() for comps in rel["components"].values()
+    ):
         raise RuntimeError("Error: No packages found in the repository")
 
     return result
@@ -81,7 +81,7 @@ def generate_html(repo_data):
 
     # Load the template from file
     template = env.get_template("index.html.j2")
-    return template.render(repo_data=repo_data, title="SecureDrop Yum Repository")
+    return template.render(repo_data=repo_data, title="FPF Tools Yum Repository")
 
 
 def main():

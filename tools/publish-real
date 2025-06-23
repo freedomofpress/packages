@@ -7,17 +7,19 @@ have their mtime fixed to a specific timestamp, so the generated XML/SQLite
 files will be reproducible.
 """
 
+import argparse
 import os
 import shutil
 import subprocess
-import sys
 import time
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
 
 def fetch_reproduce_timestamp(public: Path) -> int:
-    repomd = next(public.glob("workstation/dom0/*/repodata/repomd.xml"))
+    # FIXME: This code gets the first repomd.xml that it encounters. What if
+    # there are different ones per release dirs?
+    repomd = next(public.glob("**/repodata/repomd.xml"))
     tree = ET.parse(repomd)
     root = tree.getroot()
     revision = root.find(
@@ -27,11 +29,23 @@ def fetch_reproduce_timestamp(public: Path) -> int:
     return int(revision.text)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("dirs", nargs="+", help="Directories to publish")
+    parser.add_argument(
+        "--reproduce",
+        action="store_true",
+        default=False,
+        help="Use timestamp from the YUM repo metadata",
+    )
+    return parser.parse_args()
+
+
 def main():
+    args = parse_args()
     root = Path(__file__).parent.parent
     public = root / "public"
-    workstation = root / "workstation"
-    if "--reproduce" in sys.argv:
+    if args.reproduce:
         try:
             timestamp = fetch_reproduce_timestamp(public)
         except Exception as err:
@@ -44,13 +58,13 @@ def main():
     if public.exists():
         shutil.rmtree(public)
     public.mkdir()
-    shutil.copytree(workstation, public / "workstation")
+    for dir in args.dirs:
+        shutil.copytree(dir, public / dir)
     for rpm in public.glob("**/*.rpm"):
         os.utime(rpm, (timestamp, timestamp))
     # Folders are public/workstation/dom0/fXX, run createrepo_c in each one
-    for folder in public.glob("*/*/*/"):
-        if not folder.is_dir():
-            continue
+    release_dirs = {rpm.parent for rpm in public.glob("**/*.rpm")}
+    for folder in release_dirs:
         print(f"Generating metadata for {folder}")
         # The <revision> and <timestamp> fields are set to the current UNIX time
         # unless we explicitly override them. Use our fixed time to ensure it's
