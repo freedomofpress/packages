@@ -7,7 +7,6 @@ Currently, this includes [Dangerzone](https://dangerzone.rocks/).
 
 - A Fedora machine, since we will use the RPM toolchain.
 - [git-lfs](https://git-lfs.github.com/) to store large files.
-- `gpg`, for fetching the public/private keys.
 - `rpm-sign`, for signing the packages.
 
 ## Usage
@@ -18,8 +17,7 @@ Currently, this includes [Dangerzone](https://dangerzone.rocks/).
   prune older versions as new ones are released, to keep the repo
   manageable.
 
-- Sign packages with `/scripts/publish.py --sign --all`. You need the private key
+- Sign packages with `./scripts/sign.py --all`. You need the private key
   in the GPG keyring for this action.
 
-- Verify package signatures with `/scripts/publish.py --verify --all`. You need
-  the public key in the GPG keyring for this action.
+- Verify package signatures with `./scripts/check.py --all`.
