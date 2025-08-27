@@ -4,22 +4,6 @@ name: check-packages
 on: [push, pull_request]
 
 jobs:
-  check-sigs:
-    runs-on: ubuntu-latest
-    container:
-      image: fedora:42
-    steps:
-      - name: Install RPM packaging dependencies
-        run: yum -y update && yum -y install git git-lfs gnupg2
-      - uses: actions/checkout@v4
-        with:
-          lfs: true
-      - name: Verify signatures on all RPMs
-        run: |
-          # git lfs install && git lfs pull
-          gpg --import fpf-yum-tools-archive-keyring.gpg
-          ./scripts/publish.py --verify --all
-
   build-install-rpm:
     name: "Install on Fedora ${{matrix.version}}"
     runs-on: ubuntu-latest

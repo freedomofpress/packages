@@ -3,12 +3,14 @@ import argparse
 import os
 import subprocess
 import sys
-import json
+from pathlib import Path
 
-PROD_SIGNING_KEY_PATH = "pubkeys/prod.key"
-PROD_SIGNING_KEY_PATH_LEGACY = "pubkeys/prod-legacy.key"
+PROD_SIGNING_KEY_PATH = "fpf-yum-tools-archive-keyring.gpg"
 
-RPM_DIR = "workstation"
+
+def iter_all_rpms():
+    root = Path(__file__).parent.parent
+    yield from root.glob("**/*.rpm")
 
 
 def check_unsigned_rpm(path):
@@ -17,13 +19,12 @@ def check_unsigned_rpm(path):
 
 
 def check_unsigned_all_rpms():
-    for root, dirs, files in os.walk(RPM_DIR):
-        for name in files:
-            check_unsigned_rpm(os.path.join(root, name))
+    for rpm in iter_all_rpms():
+        check_unsigned_rpm(rpm)
 
 
 def verify_sig_rpm(path):
-    for key_path in [PROD_SIGNING_KEY_PATH, PROD_SIGNING_KEY_PATH_LEGACY]:
+    for key_path in [PROD_SIGNING_KEY_PATH]:
         try:
             subprocess.check_call(["rpmkeys", "--import", key_path])
         except subprocess.CalledProcessError as e:
@@ -44,9 +45,8 @@ def verify_sig_rpm(path):
 
 
 def verify_all_rpms():
-    for root, dirs, files in os.walk(RPM_DIR):
-        for name in files:
-            verify_sig_rpm(os.path.join(root, name))
+    for rpm in iter_all_rpms():
+        verify_sig_rpm(rpm)
 
 
 def remove_keys_in_rpm_keyring():
