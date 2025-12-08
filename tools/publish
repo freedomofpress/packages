@@ -5,8 +5,21 @@ set -e
 GIT_REPO_DIR=$(git rev-parse --show-toplevel)
 IMAGE_NAME=$(echo $(basename ${GIT_REPO_DIR})-tools)
 
+modified_files=$(git status --porcelain)
+if [[ -z "$modified_files" ]]; then
+  echo "Repository is clean"
+else
+  echo -e "Repository has uncommitted changes:\n $modified_files"
+  exit 1
+fi
+
+
 # Build the image for the RPM tools.
 podman build tools/ -t ${IMAGE_NAME}
 # Mount the git repo to /srv, and run the publish script
 podman run --rm -it -v $(git rev-parse --show-toplevel):/srv:Z ${IMAGE_NAME} \
     /srv/tools/publish-inner dangerzone "$@"
+
+git add .
+git commit -m "Updating repository metadata"
+echo -e "\nCommit created. Changes ready to be pushed!"

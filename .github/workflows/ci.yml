@@ -48,5 +48,10 @@ jobs:
       - name: Check repository metadata is up-to-date
         run: |
           ./tools/publish --reproduce
-          git status
-          git diff --exit-code
+          modified_files=$(git status --porcelain)
+          if [[ -z "$modified_files" ]]; then
+            echo "Repository is clean"
+          else
+            echo -e "Repository has uncommitted changes:\n $modified_files"
+            exit 1
+          fi
