@@ -35,6 +35,8 @@ jobs:
         run: |
           mkdir "./main/dist"
           mv ./yum/dangerzone/f${{ matrix.version }}/*.rpm ./main/dist/.
+          # Free up space for the rest of the jobs.
+          rm -r ./yum/dangerzone
 
       - name: Build end-user environment
         working-directory: main

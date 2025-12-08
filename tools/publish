@@ -20,6 +20,8 @@ podman build tools/ -t ${IMAGE_NAME}
 podman run --rm -it -v $(git rev-parse --show-toplevel):/srv:Z ${IMAGE_NAME} \
     /srv/tools/publish-inner dangerzone "$@"
 
-git add .
-git commit -m "Updating repository metadata"
-echo -e "\nCommit created. Changes ready to be pushed!"
+if [[ -z "$CI" ]]; then
+    git add .
+    git commit -m "Updating repository metadata"
+    echo -e "\nCommit created. Changes ready to be signed!"
+fi
