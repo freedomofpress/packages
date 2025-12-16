@@ -5,7 +5,7 @@ Currently, this includes [Dangerzone](https://dangerzone.rocks/).
 
 ## Prerequisites
 
-- A Fedora machine, since we will use the RPM toolchain.
+- [Podman](http://podman.io/) to run our publish script within a container
 - [git-lfs](https://git-lfs.github.com/) to store large files.
 - `rpm-sign`, for signing the packages.
 
@@ -21,3 +21,5 @@ Currently, this includes [Dangerzone](https://dangerzone.rocks/).
   in the GPG keyring for this action.
 
 - Verify package signatures with `./scripts/check.py --all`.
+
+- Prepare the RPM repo and HTML page with `./tools/publish`
