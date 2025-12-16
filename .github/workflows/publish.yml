@@ -11,8 +11,7 @@ on:
 
 jobs:
   publish-main:
-    #if: github.ref == 'refs/heads/main'
-    if: github.ref == 'refs/heads/release'
+    if: github.ref == 'refs/heads/main'
     uses: freedomofpress/actionslib/.github/workflows/publish-r2.yaml@main
     with:
       path: public/
