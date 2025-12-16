@@ -4,20 +4,20 @@ This repository holds RPM packages served on `packages.freedom.press`.
 Currently, this includes [Dangerzone](https://dangerzone.rocks/).
 
 > [!NOTE]
-> The code in this repository is mainly a reproduction of how the SecureDrop
-> team is handling their packages.
+> The code in this repository follows the design choices of
+> https://github.com/freedomofpress/securedrop-yum-prod.
 >
 > As a result, files are kept unmodified as much as possible, to be able to
 > apply patches from upstream.
 
 ## Prerequisites
 
-- [Podman](http://podman.io/) to run the `publish` script within a container ;
-- [git-lfs](https://git-lfs.github.com/) to store large files ;
-- `rpm-sign`, for signing the packages ;
+- [Podman](http://podman.io/) to run the `tools/publish` script within a container
+- [git-lfs](https://git-lfs.github.com/) to store large files
+- `rpm-sign`, for signing the packages
 - To sign packages, the private key should be in the GPG keyring.
 
-### Git LFS
+### Git LFS
 
 This repository uses Git LFS to store package files. Git LFS needs to be
 enabled and populated before it can work properly:
@@ -31,23 +31,25 @@ git lfs checkout
 
 ## Usage
 
-It is possible to publish to the following branches, depending the intention:
+You can target one of the following branches in this repo, depending on what you
+want to do:
 
-- The `main` branch is for user-facing packages
-- The `release` branch is targetted at developers.
+- The `main` branch is for packages that will be shipped to end-users.
+- The `release` branch is for packages that will be tested by developers.
 
-The usual workflow is to first publish to the `release` branch, and when the QA
-passes, merge it onto `main`.
-
-To publish a new package, from the release machine, the workflow is as follows:
+Starting with freshly built RPM packages, the steps to ship it to the end users
+are:
 
 1. Copy package files to each suite in the `dangerzone` folder. If needed,
-   prune older versions as new ones are released, to keep the repo manageable ;
-2. Sign packages with `./scripts/sign.py --all` ;
-3. Prepare the RPM repo and HTML page with `./tools/publish`
-4. Create a pull request on a specific branch that targets `main` or `release`
-5. The CI will run, and signatures will be checked against the known public ;
-6. After a merge, resulting files will be available to either A or B links as a
-   result.
+   prune older versions as new ones are released, to keep the repo manageable
+2. Sign packages with `./scripts/sign.py --all`.
+3. Prepare the RPM repo and HTML page with `./tools/publish`.
+4. Send a pull request that targets the `release` branch.
+5. Ensure that the CI completes successfully, meaning that the signatures are
+   verified and the repo metadata are in sync.
+6. Merge the PR in the `release` branch, which will publish the packages into a
+   staging YUM repo. Use this YUM repo for QA purposes.
+7. Once QA completes successfully, send a PR to merge `release` into `main`.
+8. Ensure that the CI completes successfully, and merge `release` into `main`.
 
-
+The end users can now upgrade their installation.
