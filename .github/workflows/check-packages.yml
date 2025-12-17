@@ -41,6 +41,10 @@ jobs:
           # Free up space for the rest of the jobs.
           rm -r ./yum/dangerzone
 
+      - run: |
+          df -h
+
+
       - name: Build end-user environment
         working-directory: main
         run: |
