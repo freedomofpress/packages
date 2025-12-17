@@ -30,6 +30,10 @@ jobs:
 
       - run: |
           df -h
+          tree --du -h .
+          tree --du -h yum/.git
+          tree --du -h main/.git
+          rm -rf yum/.git
 
       - name: update version from the package
         run: |
