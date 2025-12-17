@@ -26,6 +26,9 @@ jobs:
           path: yum
           lfs: 'true'
 
+      - run: |
+          df -h
+
       - name: update version from the package
         run: |
           rm ./yum/dangerzone/f${{ matrix.version }}/*qubes* # remove the qubes versions for now
