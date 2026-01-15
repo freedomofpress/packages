@@ -14,12 +14,19 @@ else
 fi
 
 
-# Build the image for the RPM tools.
-podman build tools/ -t ${IMAGE_NAME}
-# Mount the git repo to /srv, and run the publish script
-podman run --rm -it -v $(git rev-parse --show-toplevel):/srv:Z ${IMAGE_NAME} \
-    /srv/tools/publish-inner dangerzone "$@"
+# Build the image.
+podman build tools -t ${IMAGE_NAME}
 
-git add .
-git commit -m "Updating repository metadata"
-echo -e "\nCommit created. Changes ready to be pushed!"
+# Mount the git repo to /srv, and run the publish script for each of our repos.
+for repo in apt-tools-prod yum-tools-prod; do
+    echo "Generating HTML listings for '$repo'..."
+    podman run --rm -it -v $GIT_REPO_DIR:/srv:Z -w /srv/$repo ${IMAGE_NAME} \
+        ./tools/publish-inner dangerzone "$@"
+    echo "Successfully generated HTML listings for '$repo'"
+done
+
+if [[ -z "$CI" ]]; then
+    git add .
+    git commit -m "Updating repository metadata"
+    echo -e "\nCommit created. Changes ready to be signed!"
+fi
