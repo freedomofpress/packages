@@ -1,0 +1,56 @@
+Package: conmon
+Version: 2.0.25+ds1-1.1a~fpf1
+Architecture: amd64
+Maintainer: Podman Packaging Team <team+podman@tracker.debian.org>
+Installed-Size: 165
+Depends: libc6 (>= 2.34), libglib2.0-0 (>= 2.35.8), libsystemd0
+Homepage: https://github.com/containers/conmon
+Priority: optional
+Section: admin
+Filename: pool/main/c/conmon/conmon_2.0.25+ds1-1.1a~fpf1_amd64.deb
+Size: 36102
+SHA256: c177669183545c8b8c0fd2adf2f9262c732fe0cbaf9ea2eb2b77897835c85106
+SHA1: 8505380693d568c06471b6dba83fe28366c29078
+MD5sum: c773d5f1772af69738fdb956d119406f
+Description: OCI container runtime monitor
+ Conmon is a monitoring program and communication tool between a container
+ manager (like podman or CRI-O) and an OCI runtime (like runc or crun) for a
+ single container.
+ .
+ Upon being launched, it double-forks to daemonize and detach from the parent
+ that launched it. It then launches the runtime as its child. This allows
+ managing processes to die in the foreground, but still be able to watch over
+ and connect to the child process (the container).
+ .
+ While the container runs, conmon does two things:
+ .
+ - Provides a socket for attaching to the container, holding open the
+   container's standard streams and forwarding them over the socket.
+ - Writes the contents of the container's streams to a log file (or to the
+   systemd journal) so they can be read after the container's death.
+ .
+ Finally, upon the containers death, conmon will record its exit time and code
+ to be read by the managing programs.
+ .
+ Written in C and designed to have a low memory footprint, conmon is intended to
+ be run by a container managing library. Essentially, conmon is the smallest
+ daemon a container can have.
+
+Package: dangerzone
+Version: 0.10.0
+Architecture: amd64
+Maintainer: Freedom of the Press Foundation <info@freedom.press>
+Installed-Size: 580332
+Depends: podman, python3, python3-pyside6.qtcore | python3-pyside2.qtcore, python3-pyside6.qtgui | python3-pyside2.qtgui, python3-pyside6.qtwidgets | python3-pyside2.qtwidgets, python3-pyside6.qtsvgwidgets | python3-pyside2.qtsvg, python3-platformdirs | python3-appdirs, python3-click, python3-xdg, python3-colorama, python3-requests, python3-socks, python3-markdown, python3-packaging, tesseract-ocr-all
+Homepage: https://github.com/freedomofpress/dangerzone
+Priority: optional
+Section: python
+Filename: pool/main/d/dangerzone/dangerzone_0.10.0_amd64.deb
+Size: 516424524
+SHA256: cdf4b0b577faefdefc14e29bb1de370b0bb0603437228673c85fc96d0cbf17dd
+SHA1: 84ea8e1b42a7766b9b59181c9e785f916a39dec3
+MD5sum: 832e20b49d25c5330a91195c42bf5197
+Description: Take potentially dangerous PDFs, office documents, or images
+  Dangerzone is an open source desktop application that takes potentially dangerous PDFs, office documents, or images and converts them to safe PDFs. It uses disposable VMs on Qubes OS, or container technology in other OSes, to convert the documents within a secure sandbox.
+  .
+

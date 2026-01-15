@@ -1,0 +1,23 @@
+#!/bin/bash
+# Wrapper script to provide common flags to reprepro invocations.
+# Mostly it's the relative paths in the local repo we want to
+# ensure are tracked.
+set -e
+set -u
+set -o pipefail
+
+
+if ! hash reprepro >/dev/null 2>&1; then
+    echo "Error: 'reprepro' not found, install it"
+    exit 1
+fi
+
+if [[ $# < 1 ]]; then
+    echo "Usage: $0 <cmd>"
+    exit 2
+fi
+
+reprepro \
+    --basedir ./repo \
+    --outdir ./repo/public \
+    $@
