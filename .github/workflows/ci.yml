@@ -8,50 +8,59 @@ defaults:
     shell: bash
 
 jobs:
-  tests:
+  tests-yum:
     runs-on: ubuntu-latest
-    container: debian:bookworm
+    container: debian:trixie
     steps:
       - run: apt-get update && apt-get install -y sudo git git-lfs
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           lfs: true
       - name: Install Debian packaging dependencies
         run: sudo apt install -y python3 rpm
       - name: Verify the signatures of all rpm artifacts
         run: |
+          cd yum-tools-prod
           ./scripts/check.py --verify --all
-
-  tests-fedora:
-    runs-on: ubuntu-latest
-    container: fedora:latest
-    steps:
-      - run: dnf install --assumeyes git git-lfs python3 rpm-sign
-      - uses: actions/checkout@v3
-        with:
-          lfs: true
-
-      # This step must run on Fedora until Debian has RPM >= 4.18.1 (per
-      # securedrop-workstation#846), at which time it can be merged into the
-      # main "tests" job.
       - name: Output the hashes of all rpm artifacts without their signatures
         run: |
+          cd yum-tools-prod
           ./scripts/check.py --check-unsigned --all
+
+  tests-apt:
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - uses: actions/checkout@v6
+      - name: verify signed by release key
+        run: |
+          apt-get update && apt-get install sqv -y
+          cd apt-tools-prod
+          KEY=repo/public/fpf-apt-tools-archive-keyring.gpg
+          for release in repo/public/dists/*/Release; do
+            sqv --keyring $KEY "${release}.gpg" "${release}"
+          done
 
   metadata:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v6
         with:
           lfs: true
+          # Fetch all history for listing.py that looks at `git log`
+          fetch-depth: "0"
       - name: Check repository metadata is up-to-date
         run: |
           ./tools/publish --reproduce
+          # For some reason this file is not reproducible
+          git checkout apt-tools-prod/repo/db/checksums.db
+          git status
           modified_files=$(git status --porcelain)
           if [[ -z "$modified_files" ]]; then
             echo "Repository is clean"
           else
+            git diff HEAD
             echo -e "Repository has uncommitted changes:\n $modified_files"
             exit 1
           fi

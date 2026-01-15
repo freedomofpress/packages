@@ -1,0 +1,18 @@
+name: Publish yum-tools-prod to R2
+# Trigger on pushes to main/release that modify public/
+on:
+  push:
+    branches:
+      - main
+      - release
+    paths:
+      - 'yum-tools-prod/public/**'
+
+jobs:
+  publish-yum:
+    uses: ./.github/workflows/r2.yml
+    with:
+      path: yum-tools-prod/public/
+      lfs: true
+      target_dir: yum-tools-prod/
+    secrets: inherit
