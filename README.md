@@ -89,6 +89,17 @@ Same applies to new DEB packages.
 ### Publish the repo to packages.freedom.press (final)
 
 1. Once QA completes successfully, send a PR to merge `release` into `main`.
+
+   > [!NOTE]
+   > When testing QA packages, make sure to point to packages-qa.freedom.press
+   > (and not the prod one), using this command:
+   >
+   > ```
+   > sudo dnf config-manager addrepo --from-repofile=https://packages-qa.freedom.press/yum-tools-prod/dangerzone/dangerzone.repo
+   > ```
+   >
+   > _(notice the `packages-qa` subdomain)_
+
 2. Ensure that the CI completes successfully, and merge `release` into `main`.
 
 The end users can now upgrade their installation.

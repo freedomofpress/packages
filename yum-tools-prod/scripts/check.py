@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-PROD_SIGNING_KEY_PATH = "fpf-yum-tools-archive-keyring.gpg"
+PROD_SIGNING_KEY_PATH = "dangerzone/fpf-yum-tools-archive-keyring.gpg"
 
 
 def iter_all_rpms():
