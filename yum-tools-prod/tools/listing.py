@@ -75,7 +75,7 @@ def generate_html(repo_data):
 
     # Create template with autoescaping enabled
     env = Environment(
-        loader=FileSystemLoader(Path(__file__).parent),
+        loader=FileSystemLoader(Path(__file__).parents[2] / "templates" / "listing"),
         autoescape=select_autoescape(["html", "xml"]),
     )
 
@@ -90,7 +90,10 @@ def main():
     html_output = generate_html(repo_data)
     index_html = repo_path / "index.html"
     index_html.write_text(html_output)
-    shutil.copyfile(Path(__file__).parent / "styles.css", repo_path / "styles.css")
+    shutil.copyfile(
+        Path(__file__).parents[2] / "templates" / "listing" / "styles.css",
+        repo_path / "styles.css",
+    )
     print(f"Updated {index_html}")
 
 

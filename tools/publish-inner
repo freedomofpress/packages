@@ -1,5 +1,0 @@
-#!/bin/bash
-set -euxo pipefail
-
-/srv/tools/publish-real "$@"
-/srv/tools/listing.py
