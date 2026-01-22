@@ -1,0 +1,19 @@
+Origin: Dangerzone
+Codename: forky
+Date: Tue, 02 Dec 2025 09:15:32 UTC
+Valid-Until: Sat, 06 Jun 2026 09:15:32 UTC
+Architectures: amd64
+Components: main
+Description: Dangerzone packages (forky)
+MD5Sum:
+ bcb8f99947aa8da484a3baef44c6e75c 1231 main/binary-amd64/Packages
+ 1085ea96208dfd3f47f29e9c994a9f01 664 main/binary-amd64/Packages.gz
+ f144478f4a8bc8445bf87dfe1db55933 96 main/binary-amd64/Release
+SHA1:
+ 4fef65b66dee68cc8beb2f60e310e2b88f1beb40 1231 main/binary-amd64/Packages
+ d1ca8171a7e1f8bfc6cc075be06c6c3340112332 664 main/binary-amd64/Packages.gz
+ 56c1db3cf03af8df1eca31a913b29d671f8d1b63 96 main/binary-amd64/Release
+SHA256:
+ a99fb34ace897dab8c4c9aadd9de51756554d9200b09808dd61c3553015e022d 1231 main/binary-amd64/Packages
+ 8eafea7616c6ec6e2ac2f5904cbb9e409ed53863c7c5baf58644b5f94bb414a5 664 main/binary-amd64/Packages.gz
+ 543ee5af8b859ede1df52b0bb16e69d979522446974bb78a5ed1fc4764364267 96 main/binary-amd64/Release

@@ -1,0 +1,55 @@
+Origin: Dangerzone
+Codename: bookworm
+Components: main
+Architectures: amd64
+ValidFor: 6m
+Description: Dangerzone packages (bookworm)
+
+Origin: Dangerzone
+Codename: bullseye
+Components: main
+Architectures: amd64
+ValidFor: 6m
+Description: Dangerzone packages (bullseye)
+
+Origin: Dangerzone
+Codename: jammy
+Components: main
+Architectures: amd64
+ValidFor: 6m
+Description: Dangerzone packages (jammy)
+
+Origin: Dangerzone
+Codename: noble
+Components: main
+Architectures: amd64
+ValidFor: 6m
+Description: Dangerzone packages (noble)
+
+Origin: Dangerzone
+Codename: trixie
+Components: main
+Architectures: amd64
+ValidFor: 6m
+Description: Dangerzone packages (trixie)
+
+Origin: Dangerzone
+Codename: plucky
+Components: main
+Architectures: amd64
+ValidFor: 6m
+Description: Dangerzone packages (plucky)
+
+Origin: Dangerzone
+Codename: questing
+Components: main
+Architectures: amd64
+ValidFor: 6m
+Description: Dangerzone packages (questing)
+
+Origin: Dangerzone
+Codename: forky
+Components: main
+Architectures: amd64
+ValidFor: 6m
+Description: Dangerzone packages (forky)

@@ -1,0 +1,19 @@
+Origin: Dangerzone
+Codename: trixie
+Date: Tue, 02 Dec 2025 09:16:01 UTC
+Valid-Until: Sat, 06 Jun 2026 09:16:01 UTC
+Architectures: amd64
+Components: main
+Description: Dangerzone packages (trixie)
+MD5Sum:
+ bcb8f99947aa8da484a3baef44c6e75c 1231 main/binary-amd64/Packages
+ 1085ea96208dfd3f47f29e9c994a9f01 664 main/binary-amd64/Packages.gz
+ 9a92ff0ff28fe522aaf189b41b9c84fa 97 main/binary-amd64/Release
+SHA1:
+ 4fef65b66dee68cc8beb2f60e310e2b88f1beb40 1231 main/binary-amd64/Packages
+ d1ca8171a7e1f8bfc6cc075be06c6c3340112332 664 main/binary-amd64/Packages.gz
+ e8ca019dbd31c60e35bc5125eb2f8e1eb7da66aa 97 main/binary-amd64/Release
+SHA256:
+ a99fb34ace897dab8c4c9aadd9de51756554d9200b09808dd61c3553015e022d 1231 main/binary-amd64/Packages
+ 8eafea7616c6ec6e2ac2f5904cbb9e409ed53863c7c5baf58644b5f94bb414a5 664 main/binary-amd64/Packages.gz
+ a709d167f1a201a81143a15f7e16f776918651476bcea109edfad1a48d0cedba 97 main/binary-amd64/Release

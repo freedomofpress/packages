@@ -1,0 +1,97 @@
+name: APT: Check Dangerzone packages
+
+on:
+  pull_request:
+    paths:
+      - 'apt-tools-prod/repo/public/pool/main/d/dangerzone/**'
+      - '.github/workflows/check-packages-apt.yml'
+  push:
+    paths:
+      - 'apt-tools-prod/repo/public/pool/main/d/dangerzone/**'
+      - '.github/workflows/check-packages-apt.yml'
+
+jobs:
+  install-deb:
+    name: "Install on ${{ matrix.distro }} ${{matrix.version}}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - target: ubuntu-22.04
+            distro: ubuntu
+            version: "22.04"
+            version-name: jammy
+          - target: ubuntu-24.04
+            distro: ubuntu
+            version: "24.04"
+            version-name: noble
+          - target: ubuntu-25.04
+            distro: ubuntu
+            version: "25.04"
+            version-name: plucky
+          - target: ubuntu-25.10
+            distro: ubuntu
+            version: "25.10"
+            version-name: questing
+          - target: debian-bullseye
+            distro: debian
+            version: bullseye
+            version-name: bullseye
+          - target: debian-bookworm
+            distro: debian
+            version: bookworm
+            version-name: bookworm
+          - target: debian-trixie
+            distro: debian
+            version: trixie
+            version-name: trixie
+          - target: debian-forky
+            distro: debian
+            version: forky
+            version-name: forky
+
+    steps:
+      - name: Checkout dangerzone repo
+        uses: actions/checkout@v6
+        with:
+          repository: freedomofpress/dangerzone
+
+      # Download the Dangerzone .deb package, without downloading the rest of
+      # the repo.
+      - name: Checkout DEB packages
+        uses: actions/checkout@v6
+        with:
+          path: apt
+          lfs: true
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            apt-tools-prod/repo/public/pool/main/d/dangerzone/dangerzone*.deb
+
+      - name: update version from the package
+        run: |
+          echo apt/apt-tools-prod/repo/public/pool/main/d/dangerzone/dangerzone*.deb | sed 's/.*_\(.*\)-[^-]*_.*\.deb/\1/' > ./share/version.txt
+
+      - name: mv dangerzone .deb
+        run: |
+          mkdir ./deb_dist
+          mv apt/apt-tools-prod/repo/public/pool/main/d/dangerzone/dangerzone*.deb ./deb_dist/.
+
+      - name: Create end-user environment on (${{ matrix.target }})
+        run: |
+          ./dev_scripts/env.py --distro ${{ matrix.distro }} \
+              --version ${{ matrix.version }} \
+              build
+
+      - name: Run a test command
+        run: |
+          ./dev_scripts/env.py --distro ${{ matrix.distro }} \
+              --version ${{ matrix.version }} \
+              run dangerzone-cli \
+              --ocr-lang eng \
+              dangerzone/tests/test_docs/sample-pdf.pdf
+
+      - name: Check that the Dangerzone GUI imports work
+        run: |
+          ./dev_scripts/env.py --distro ${{ matrix.distro }} \
+              --version ${{ matrix.version }} \
+              run dangerzone --help

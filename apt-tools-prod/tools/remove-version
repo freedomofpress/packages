@@ -1,0 +1,13 @@
+#!/bin/bash
+# Script to remove all the packages for a specific version
+set -e
+set -o pipefail
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 VERSION"
+    echo "Example: $0 0.7.1"
+    exit 1
+fi
+
+VERSION=$1
+rm dangerzone/*/dangerzone_${VERSION}*.deb

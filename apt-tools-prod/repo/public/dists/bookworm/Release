@@ -1,0 +1,19 @@
+Origin: Dangerzone
+Codename: bookworm
+Date: Tue, 02 Dec 2025 09:15:57 UTC
+Valid-Until: Sat, 06 Jun 2026 09:15:57 UTC
+Architectures: amd64
+Components: main
+Description: Dangerzone packages (bookworm)
+MD5Sum:
+ bcb8f99947aa8da484a3baef44c6e75c 1231 main/binary-amd64/Packages
+ 1085ea96208dfd3f47f29e9c994a9f01 664 main/binary-amd64/Packages.gz
+ d63023616f31bc57cc9ff9aae3b3da69 99 main/binary-amd64/Release
+SHA1:
+ 4fef65b66dee68cc8beb2f60e310e2b88f1beb40 1231 main/binary-amd64/Packages
+ d1ca8171a7e1f8bfc6cc075be06c6c3340112332 664 main/binary-amd64/Packages.gz
+ 9558cc36c06fc891d28755b43f8317647337dd87 99 main/binary-amd64/Release
+SHA256:
+ a99fb34ace897dab8c4c9aadd9de51756554d9200b09808dd61c3553015e022d 1231 main/binary-amd64/Packages
+ 8eafea7616c6ec6e2ac2f5904cbb9e409ed53863c7c5baf58644b5f94bb414a5 664 main/binary-amd64/Packages.gz
+ 26f9bfc7b0cc94efe2e853b6fddf80bc3948c4de5811457854da2f43ef168cdf 99 main/binary-amd64/Release
