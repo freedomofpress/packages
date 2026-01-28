@@ -1,5 +1,5 @@
 name: Publish landing page to R2
-# Trigger on pushes to main/release that modify public/
+# Trigger on pushes to main/release that modify templates/landing/
 on:
   push:
     branches:
@@ -7,6 +7,8 @@ on:
       - release
     paths:
       - 'templates/landing/**'
+      - '.github/workflows/publish-landing.yml'
+      - '.github/workflows/r2.yml'
 
 jobs:
   publish-yum:
