@@ -1,0 +1,19 @@
+#!/bin/bash
+# Script to add a version from the dangerzone repository, by
+# copying the debian file to the bookworm folder and creating
+# symlinks for it.
+
+set -e
+set -x
+set -o pipefail
+
+PACKAGE_SRC=$1
+PACKAGE=$(basename $PACKAGE_SRC)
+
+cp $PACKAGE_SRC dangerzone/bookworm/$PACKAGE
+
+for dir in dangerzone/* ; do                                                     
+    if [ "$dir" != "dangerzone/bookworm" ]; then                                 
+        ln -sf "../bookworm/$PACKAGE" "$dir/."                          
+    fi                                                                 
+done       

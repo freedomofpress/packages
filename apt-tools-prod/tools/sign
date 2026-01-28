@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+"""
+Script for managing updates to a 'reprepro' apt repository.
+Expects a certain dir structure, will loop over distributions
+specified in subdirectories, then publish all deb packages
+found in each.
+"""
+
+import logging
+import os
+import subprocess
+import sys
+
+logger = logging.getLogger(__name__)
+
+
+REPO_ROOT = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir))
+REPROPRO_DIR_DEFAULT = os.path.join(REPO_ROOT, "repo")
+REPREPRO_DIR = os.environ.get("REPREPRO_BASE_DIR", REPROPRO_DIR_DEFAULT)
+REPREPRO_PUBLIC_DIR = os.path.join(REPREPRO_DIR, "public")
+
+DZ_SIGNING_PUBKEY = "DE28AB241FA48260FAC9B8BAA7C9B38522604281"
+
+
+def get_release_files():
+    """
+    Find all Release files, to facilitate generating a detached
+    signature file via airgapped signing process.
+    """
+    dists_dir = os.path.join(REPREPRO_PUBLIC_DIR, "dists")
+    find_cmd = ["find", dists_dir, "-iname", "Release"]
+    find_results = subprocess.check_output(find_cmd).decode("utf-8").rstrip()
+    find_results = find_results.split("\n")
+    # Results will include e.g.:
+    #
+    #   ./repo/public/dists/focal/main/binary-amd64/Release
+    #   ./repo/public/dists/focal/Release
+    #
+    # Only the latter should be signed.
+    find_results = [x for x in find_results if "binary" not in x]
+    return find_results
+
+
+def sign_release_files():
+    for f in get_release_files():
+        logger.info(f"Signing {f}")
+        subprocess.run(
+            [
+                "gpg",
+                "--batch",
+                "--yes",
+                "--armor",
+                "--detach-sig",
+                "-u",
+                DZ_SIGNING_PUBKEY,
+                "-o",
+                f + ".gpg",
+                f,
+            ],
+            check=True,
+        )
+
+
+def setup_logging():
+    """Simple way to setup logging.
+
+    Copied from: https://docs.python.org/3/howto/logging.html
+    """
+    # create logger
+    logger.setLevel(logging.INFO)
+
+    # create console handler and set level to debug
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+
+    # create formatter
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+
+    # add formatter to ch
+    ch.setFormatter(formatter)
+
+    # add ch to logger
+    logger.addHandler(ch)
+
+
+def main():
+    setup_logging()
+
+    assert os.path.exists(REPREPRO_DIR)
+
+    logger.info("Signing the produced Release files")
+    sign_release_files()
+
+
+if __name__ == "__main__":
+    sys.exit(main())

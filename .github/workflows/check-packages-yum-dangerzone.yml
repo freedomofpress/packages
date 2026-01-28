@@ -1,0 +1,62 @@
+name: YUM: Check Dangerzone packages
+
+on:
+  pull_request:
+    paths:
+      - 'yum-tools-prod/public/dangerzone/**'
+      - '.github/workflows/check-packages-yum.yml'
+  push:
+    paths:
+      - 'yum-tools-prod/public/dangerzone/**'
+      - '.github/workflows/check-packages-yum.yml'
+
+jobs:
+  build-install-rpm:
+    name: "Install on Fedora ${{matrix.version}}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - version: "41"
+          - version: "42"
+          - version: "43"
+    steps:
+      - name: Checkout dangerzone repo
+        uses: actions/checkout@v6
+        with:
+          repository: freedomofpress/dangerzone
+
+      # Download the Dangerzone .rpm package for each Fedora version, without
+      # downloading the rest of the repo.
+      - name: Checkout RPM packages
+        uses: actions/checkout@v6
+        with:
+          path: yum
+          lfs: true
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            yum-tools-prod/public/dangerzone/f${{ matrix.version }}/dangerzone-*.x86_64.rpm
+
+      - name: update version from the package
+        run: |
+          rm yum/yum-tools-prod/public/dangerzone/f${{ matrix.version }}/*qubes* # remove the qubes versions for now
+          echo yum/yum-tools-prod/public/dangerzone/f${{ matrix.version }}/dangerzone-*.x86_64.rpm | sed 's/.*-\([^-]*\)-[^-]*\.*\.x86_64\.rpm/\1/' > share/version.txt
+
+      - name: mv dangerzone .rpm files
+        run: |
+          mkdir dist
+          mv yum/yum-tools-prod/public/dangerzone/f${{ matrix.version }}/*.rpm dist/
+
+      - name: Build end-user environment
+        run: |
+          ./dev_scripts/env.py --distro fedora --version ${{ matrix.version }} build
+
+      - name: Run a test command
+        run: |
+          ./dev_scripts/env.py --distro fedora --version ${{ matrix.version }} \
+              run dangerzone-cli dangerzone/tests/test_docs/sample-pdf.pdf --ocr-lang eng
+
+      - name: Check that the Dangerzone GUI imports work
+        run: |
+          ./dev_scripts/env.py --distro fedora --version ${{ matrix.version }} \
+              run dangerzone --help

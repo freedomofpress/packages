@@ -1,0 +1,85 @@
+#!/usr/bin/env python3
+"""
+Script for generating yum repository metadata in a reproducible manner.
+
+Files are copied into public/ and metadata is generated there. All RPMs
+have their mtime fixed to a specific timestamp, so the generated XML/SQLite
+files will be reproducible.
+"""
+
+import argparse
+import os
+import shutil
+import subprocess
+import time
+from pathlib import Path
+import xml.etree.ElementTree as ET
+
+
+def fetch_reproduce_timestamp(public: Path) -> int:
+    # FIXME: This code gets the first repomd.xml that it encounters. What if
+    # there are different ones per release dirs?
+    repomd = next(public.glob("**/repodata/repomd.xml"))
+    tree = ET.parse(repomd)
+    root = tree.getroot()
+    revision = root.find(
+        "repo:revision", {"repo": "http://linux.duke.edu/metadata/repo"}
+    )
+    print(f"Will use a timestamp of {revision.text} (from {repomd})")
+    return int(revision.text)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("dirs", nargs="+", help="Directories to publish")
+    parser.add_argument(
+        "--reproduce",
+        action="store_true",
+        default=False,
+        help="Use timestamp from the YUM repo metadata",
+    )
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    root = Path(__file__).parent.parent
+    public = root / "public"
+    if args.reproduce:
+        try:
+            timestamp = fetch_reproduce_timestamp(public)
+        except Exception as err:
+            raise RuntimeError("Failed to fetch timestamp from repomd.xml") from err
+    else:
+        # Use the current time
+        timestamp = int(time.time())
+    # Reset public, copy the workstation/ tree into it
+    print("Creating public/ (from scratch)")
+    if public.exists():
+        shutil.rmtree(public)
+    public.mkdir()
+    for dir in args.dirs:
+        shutil.copytree(dir, public / dir)
+    for rpm in public.glob("**/*.rpm"):
+        os.utime(rpm, (timestamp, timestamp))
+    # Folders are public/workstation/dom0/fXX, run createrepo_c in each one
+    release_dirs = {rpm.parent for rpm in public.glob("**/*.rpm")}
+    for folder in release_dirs:
+        print(f"Generating metadata for {folder}")
+        # The <revision> and <timestamp> fields are set to the current UNIX time
+        # unless we explicitly override them. Use our fixed time to ensure it's
+        # consistent regardless of how long this command takes to run.
+        subprocess.check_call(
+            [
+                "createrepo_c",
+                "--revision",
+                str(timestamp),
+                "--set-timestamp-to-revision",
+                str(folder),
+            ]
+        )
+    print("Done!")
+
+
+if __name__ == "__main__":
+    main()
