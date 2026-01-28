@@ -1,4 +1,4 @@
-name: YUM: Check Dangerzone packages
+name: "YUM: Check Dangerzone packages"
 
 on:
   pull_request:
