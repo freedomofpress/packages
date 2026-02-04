@@ -3,11 +3,11 @@ name: "APT: Check Dangerzone packages"
 on:
   pull_request:
     paths:
-      - 'apt-tools-prod/repo/public/pool/main/d/dangerzone/**'
+      - 'public/apt-tools-prod/pool/main/d/dangerzone/**'
       - '.github/workflows/check-packages-apt.yml'
   push:
     paths:
-      - 'apt-tools-prod/repo/public/pool/main/d/dangerzone/**'
+      - 'public/apt-tools-prod/pool/main/d/dangerzone/**'
       - '.github/workflows/check-packages-apt.yml'
 
 jobs:
@@ -65,16 +65,16 @@ jobs:
           lfs: true
           sparse-checkout-cone-mode: false
           sparse-checkout: |
-            apt-tools-prod/repo/public/pool/main/d/dangerzone/dangerzone*.deb
+            public/apt-tools-prod/pool/main/d/dangerzone/dangerzone*.deb
 
       - name: update version from the package
         run: |
-          echo apt/apt-tools-prod/repo/public/pool/main/d/dangerzone/dangerzone*.deb | sed 's/.*_\(.*\)-[^-]*_.*\.deb/\1/' > ./share/version.txt
+          dpkg-deb -f apt/public/apt-tools-prod/pool/main/d/dangerzone/dangerzone_*.deb Version > ./share/version.txt
 
       - name: mv dangerzone .deb
         run: |
           mkdir ./deb_dist
-          mv apt/apt-tools-prod/repo/public/pool/main/d/dangerzone/dangerzone*.deb ./deb_dist/.
+          mv apt/public/apt-tools-prod/pool/main/d/dangerzone/dangerzone*.deb ./deb_dist/.
 
       - name: Create end-user environment on (${{ matrix.target }})
         run: |
