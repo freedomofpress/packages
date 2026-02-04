@@ -46,7 +46,7 @@ def parse_rpm_repo(repo_path):
 
                 # Calculate relative path for download link
                 rel_path = rpm_file.relative_to(repo_path)
-                download_link = f"/{rel_path}"
+                download_link = f"/yum-tools-prod/{rel_path}"
 
                 package_info = {
                     "name": hdr[rpm.RPMTAG_NAME],
