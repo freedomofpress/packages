@@ -11,13 +11,15 @@ import os
 import subprocess
 import sys
 
+from pathlib import Path
+
 logger = logging.getLogger(__name__)
 
 
-REPO_ROOT = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir))
-REPROPRO_DIR_DEFAULT = os.path.join(REPO_ROOT, "repo")
-REPREPRO_DIR = os.environ.get("REPREPRO_BASE_DIR", REPROPRO_DIR_DEFAULT)
-REPREPRO_PUBLIC_DIR = os.path.join(REPREPRO_DIR, "public")
+REPO_ROOT = Path(__file__).parent.parent
+REPREPRO_DIR_DEFAULT = REPO_ROOT / "apt-tools-prod" / "repo"
+REPREPRO_DIR = os.environ.get("REPREPRO_BASE_DIR", REPREPRO_DIR_DEFAULT)
+REPREPRO_PUBLIC_DIR = REPO_ROOT / "public" / "apt-tools-prod"
 
 DZ_SIGNING_PUBKEY = "DE28AB241FA48260FAC9B8BAA7C9B38522604281"
 
