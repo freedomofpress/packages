@@ -91,7 +91,7 @@ def parse_apt_repo(apt_root: Path, repo_base_path: Path):
                         # Extract filename for download link
                         filename = pkg["Filename"]
                         # Construct the download link relative to the repo base
-                        download_link = str(Path("/") / filename)
+                        download_link = f"/apt-tools-prod/{filename}"
 
                         package_info = {
                             "name": pkg["Package"],
