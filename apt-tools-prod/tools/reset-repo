@@ -4,4 +4,4 @@ set -e
 set -x
 set -o pipefail
 
-rm -rf repo/db repo/public/dists repo/public/pool
+rm -rf repo/db public/apt-tools-prod/dists public/apt-tools-prod/pool

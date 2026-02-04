@@ -85,7 +85,7 @@ def generate_html(repo_data):
 
 
 def main():
-    repo_path = Path(__file__).parent.parent / "public"
+    repo_path = Path(__file__).parents[2] / "public" / "yum-tools-prod"
     repo_data = parse_rpm_repo(repo_path)
     html_output = generate_html(repo_data)
     index_html = repo_path / "index.html"
