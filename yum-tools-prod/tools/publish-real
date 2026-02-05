@@ -43,8 +43,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    root = Path(__file__).parent.parent
-    public = root / "public"
+    public = Path(__file__).parents[2] / "public" / "yum-tools-prod"
     if args.reproduce:
         try:
             timestamp = fetch_reproduce_timestamp(public)

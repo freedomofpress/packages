@@ -46,7 +46,7 @@ def parse_rpm_repo(repo_path):
 
                 # Calculate relative path for download link
                 rel_path = rpm_file.relative_to(repo_path)
-                download_link = f"/{rel_path}"
+                download_link = f"/yum-tools-prod/{rel_path}"
 
                 package_info = {
                     "name": hdr[rpm.RPMTAG_NAME],
@@ -85,7 +85,7 @@ def generate_html(repo_data):
 
 
 def main():
-    repo_path = Path(__file__).parent.parent / "public"
+    repo_path = Path(__file__).parents[2] / "public" / "yum-tools-prod"
     repo_data = parse_rpm_repo(repo_path)
     html_output = generate_html(repo_data)
     index_html = repo_path / "index.html"
@@ -94,6 +94,18 @@ def main():
         Path(__file__).parents[2] / "templates" / "listing" / "styles.css",
         repo_path / "styles.css",
     )
+
+    # The location of the GPG key is very sensitive, because it seems that some
+    # Fedora-based distros fetch it every time they need to update their
+    # packages. We have already changed its location once, and this broke
+    # updates for existing users: https://github.com/freedomofpress/packages/issues/54
+    #
+    # Here, we add a copy to the original location, to make updates work again.
+    shutil.copyfile(
+        Path(__file__).parents[1] / "dangerzone" / "fpf-yum-tools-archive-keyring.gpg",
+        repo_path / "fpf-yum-tools-archive-keyring.gpg",
+    )
+
     print(f"Updated {index_html}")
 
 

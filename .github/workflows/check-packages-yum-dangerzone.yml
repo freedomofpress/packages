@@ -3,11 +3,11 @@ name: "YUM: Check Dangerzone packages"
 on:
   pull_request:
     paths:
-      - 'yum-tools-prod/public/dangerzone/**'
+      - 'public/yum-tools-prod/dangerzone/**'
       - '.github/workflows/check-packages-yum.yml'
   push:
     paths:
-      - 'yum-tools-prod/public/dangerzone/**'
+      - 'public/yum-tools-prod/dangerzone/**'
       - '.github/workflows/check-packages-yum.yml'
 
 jobs:
@@ -35,17 +35,17 @@ jobs:
           lfs: true
           sparse-checkout-cone-mode: false
           sparse-checkout: |
-            yum-tools-prod/public/dangerzone/f${{ matrix.version }}/dangerzone-*.x86_64.rpm
+            public/yum-tools-prod/dangerzone/f${{ matrix.version }}/dangerzone-*.x86_64.rpm
 
       - name: update version from the package
         run: |
-          rm yum/yum-tools-prod/public/dangerzone/f${{ matrix.version }}/*qubes* # remove the qubes versions for now
-          echo yum/yum-tools-prod/public/dangerzone/f${{ matrix.version }}/dangerzone-*.x86_64.rpm | sed 's/.*-\([^-]*\)-[^-]*\.*\.x86_64\.rpm/\1/' > share/version.txt
+          rm yum/public/yum-tools-prod/dangerzone/f${{ matrix.version }}/*qubes* # remove the qubes versions for now
+          echo yum/public/yum-tools-prod/dangerzone/f${{ matrix.version }}/dangerzone-*.x86_64.rpm | sed 's/.*-\([^-]*\)-[^-]*\.*\.x86_64\.rpm/\1/' > share/version.txt
 
       - name: mv dangerzone .rpm files
         run: |
           mkdir dist
-          mv yum/yum-tools-prod/public/dangerzone/f${{ matrix.version }}/*.rpm dist/
+          mv yum/public/yum-tools-prod/dangerzone/f${{ matrix.version }}/*.rpm dist/
 
       - name: Build end-user environment
         run: |

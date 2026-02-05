@@ -35,9 +35,8 @@ jobs:
       - name: verify signed by release key
         run: |
           apt-get update && apt-get install sqv -y
-          cd apt-tools-prod
-          KEY=repo/public/fpf-apt-tools-archive-keyring.gpg
-          for release in repo/public/dists/*/Release; do
+          KEY=public/apt-tools-prod/fpf-apt-tools-archive-keyring.gpg
+          for release in public/apt-tools-prod/dists/*/Release; do
             sqv --keyring $KEY "${release}.gpg" "${release}"
           done
 
