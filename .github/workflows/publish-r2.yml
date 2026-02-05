@@ -1,28 +1,21 @@
-name: Publish to R2
-
+name: Publish repos to R2
+# Trigger on pushes to main/release that modify public/
 on:
-  workflow_call:
-    inputs:
-      path:
-        required: true
-        type: string
-      lfs:
-        required: false
-        default: false
-        type: boolean
-      target_dir:
-        required: false
-        default: ''
-        type: string
+  push:
+    branches:
+      - main
+      - release
+    paths:
+      - 'public/**'
+      - '.github/workflows/publish-r2.yml'
 
 jobs:
   publish-main:
     if: github.ref == 'refs/heads/main'
     uses: freedomofpress/actionslib/.github/workflows/publish-r2.yaml@main
     with:
-      path: ${{ inputs.path }}
-      lfs: ${{ inputs.lfs }}
-      target_dir: ${{ inputs.target_dir }}
+      path: public/
+      lfs: true
     secrets:
       R2_ACCESS_KEY_ID: ${{ secrets.PROD_R2_ACCESS_KEY_ID }}
       R2_SECRET_ACCESS_KEY: ${{ secrets.PROD_R2_SECRET_ACCESS_KEY }}
@@ -33,9 +26,8 @@ jobs:
     if: github.ref == 'refs/heads/release'
     uses: freedomofpress/actionslib/.github/workflows/publish-r2.yaml@main
     with:
-      path: ${{ inputs.path }}
-      lfs: ${{ inputs.lfs }}
-      target_dir: ${{ inputs.target_dir }}
+      path: public/
+      lfs: true
     secrets:
       R2_ACCESS_KEY_ID: ${{ secrets.QA_R2_ACCESS_KEY_ID }}
       R2_SECRET_ACCESS_KEY: ${{ secrets.QA_R2_SECRET_ACCESS_KEY }}
